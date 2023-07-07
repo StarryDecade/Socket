@@ -3,7 +3,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<windows.h>
 #include<WinSock2.h>
-#include<stdio.h>
+#include<thread>
 #include<iostream>
 using namespace std;
 
@@ -114,6 +114,34 @@ int processor(SOCKET _cSock) {
 	break;
 	}
 }
+bool g_bRun = true;
+void cmdThread(SOCKET _socket) {
+	while (true)
+	{
+		char cmdBuf[4096] = {};
+		cin >> cmdBuf;
+		if (0 == strcmp(cmdBuf, "exit")) {
+			cout << "退出cmdThread线程" << endl;
+			g_bRun = false;
+			return;
+		}
+		else if (0 == strcmp(cmdBuf, "login")) {
+			Login login;
+			strcpy(login.userName, "StarsDecade");
+			strcpy(login.PassWord, "123456");
+			int ret = send(_socket, (const char*)&login, sizeof(Login), 0);
+
+		}
+		else if (0 == strcmp(cmdBuf, "logout")) {
+			Logout logout;
+			strcpy(logout.userName, "StarsDecade");
+			send(_socket, (const char*)&logout, sizeof(Logout), 0);
+		}
+		else {
+			cout << "不支持该命令，请重新输入..." << endl;
+		}
+	}
+}
 
 int main() {
 	//启动windows socket 2.x环境
@@ -141,8 +169,10 @@ int main() {
 		printf("连接服务器成功...\n");
 	}
 
-	
-	while (true)
+	//启动线程
+	thread t1(cmdThread, _socket);
+	t1.detach();
+	while (g_bRun)
 	{
 		fd_set fdReads;
 		FD_ZERO(&fdReads);
@@ -162,12 +192,13 @@ int main() {
 				break;
 			}
 		}
-
+		/*
 		printf("空闲时间处理其它业务..\n");
 		Login login;
 		strncpy(login.userName, "lyd", sizeof(login.userName) - 1);
 		strncpy(login.PassWord, "lyd", sizeof(login.PassWord) - 1);
 		send(_socket, (const char*)&login, sizeof(Login), 0);
+		*/
 	}
 	//4、关闭客户端
 	closesocket(_socket);

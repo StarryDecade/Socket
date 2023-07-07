@@ -78,6 +78,7 @@ int processor(SOCKET _cSock) {
 	//接收客户数据
 	int nLen = recv(_cSock, szRecv, sizeof(DataHeader), 0);//先接收报文头
 	DataHeader* header = (DataHeader*)szRecv;
+
 	if (nLen <= 0) {
 		printf("客服端已退出，任务结束。\n");
 		return -1;
@@ -190,13 +191,14 @@ int main() {
 				g_clients.push_back(_csocket);
 				printf("新客户端加入： IP = %s \n", inet_ntoa(_caddr.sin_addr));
 			}
-			for (int n = 0; n < (int)fdRead.fd_count; n++) {
-				if (-1 == processor(fdRead.fd_array[n])) {//结束后把改句柄从集合中删除
-					auto iter = find(g_clients.begin(), g_clients.end(), fdRead.fd_array[n]);
-					if (iter != g_clients.end())	g_clients.erase(iter);
-				}
+		}
+		for (int n = 0; n < (int)fdRead.fd_count; n++) {
+			if (-1 == processor(fdRead.fd_array[n])) {//结束后把改句柄从集合中删除
+				auto iter = find(g_clients.begin(), g_clients.end(), fdRead.fd_array[n]);
+				if (iter != g_clients.end())	g_clients.erase(iter);
 			}
 		}
+		
 		/*cout << "服务端做事........\n";*/
 	}
 
