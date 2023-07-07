@@ -1,8 +1,22 @@
 #define WIN32_LEAN_AND_MEAN
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
-#include<windows.h>
-#include<WinSock2.h>
+
+#ifdef _WIN32
+	#include<windows.h>
+	#include<WinSock2.h>
+#else
+	#include<unistd.h>
+	#include<arpa/inet.h>
+	#include<string.h>
+	#define SOCKET int
+	#define INVALID_SOCKET (SOCKET)(~0)
+	#define SOCKET_ERROR		   (-1)
+
+#endif // _WIN32
+
+	
+
 #include<thread>
 #include<iostream>
 using namespace std;
@@ -113,6 +127,7 @@ int processor(SOCKET _cSock) {
 	}
 	break;
 	}
+	return 1;
 }
 bool g_bRun = true;
 void cmdThread(SOCKET _socket) {
@@ -144,10 +159,14 @@ void cmdThread(SOCKET _socket) {
 }
 
 int main() {
+#ifdef _WIN32
 	//启动windows socket 2.x环境
 	WORD var = MAKEWORD(2, 2);
 	WSADATA dat;
 	WSAStartup(var, &dat);
+#endif // _WIN32
+
+	
 	//1、创建套接字，连接服务端
 	SOCKET _socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (INVALID_SOCKET == _socket) {
@@ -158,7 +177,12 @@ int main() {
 	}
 	//2、连接服务端
 	sockaddr_in _sin = {};
+#ifdef _WIN32
 	_sin.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+#else
+	_sin.sin_addr.S_addr = inet_addr("192.168.254.1");
+#endif // _WIN32
+
 	_sin.sin_family = AF_INET;
 	_sin.sin_port = htons(4567);
 	int ret = connect(_socket, (sockaddr*)&_sin, sizeof(sockaddr_in));
@@ -178,7 +202,7 @@ int main() {
 		FD_ZERO(&fdReads);
 		FD_SET(_socket, &fdReads);
 		timeval t{ 0, 0 };
-		int ret = select(_socket, &fdReads, 0, 0, &t);
+		int ret = select(_socket + 1, &fdReads, 0, 0, &t);
 		if (ret < 0) {
 			printf("select任务结束1\n");
 			break;
@@ -200,10 +224,17 @@ int main() {
 		send(_socket, (const char*)&login, sizeof(Login), 0);
 		*/
 	}
+	
+	
+#ifdef _WIN32
 	//4、关闭客户端
 	closesocket(_socket);
 	WSACleanup();
 	printf("客服端关闭... \n");
+#else
+	close(_socket);
+#endif // _WIN32
+
 	getchar();
 	return 0;
 }

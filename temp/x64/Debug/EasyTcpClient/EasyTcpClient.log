@@ -1,4 +1,3 @@
 ﻿  client.cpp
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\client.cpp(181,20): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\client.cpp(116): warning C4715: “processor”: 不是所有的控件路径都返回值
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\client.cpp(205,28): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据
   EasyTcpClient.vcxproj -> C:\Four years of university experience\c++\Socket网络通信基础\bin\x64\Debug\EasyTcpClient.exe
