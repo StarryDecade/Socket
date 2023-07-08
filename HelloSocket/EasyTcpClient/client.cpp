@@ -178,7 +178,7 @@ int main() {
 	//2、连接服务端
 	sockaddr_in _sin = {};
 #ifdef _WIN32
-	_sin.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+	_sin.sin_addr.S_un.S_addr = inet_addr("192.168.254.129");
 #else
 	_sin.sin_addr.S_addr = inet_addr("192.168.254.1");
 #endif // _WIN32

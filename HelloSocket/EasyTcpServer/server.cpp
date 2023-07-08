@@ -1,8 +1,19 @@
 #define WIN32_LEAN_AND_MEAN
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#ifdef _WIN32
 #include<windows.h>
 #include<WinSock2.h>
+#define socklen_t int
+#else
+#include<unistd.h>
+#include<arpa/inet.h>
+#include<string.h>
+#define SOCKET int
+#define INVALID_SOCKET (SOCKET)(~0)
+#define SOCKET_ERROR		   (-1)
+#endif // _WIN32
+
 #include<iostream>
 #include<vector>
 using namespace std;
@@ -114,18 +125,26 @@ int processor(SOCKET _cSock) {
 	}
 		break;
 	}
+	return 1;
 }
 
 int main() {
+#ifdef _WIN32
 	//启动windows socket 2.x环境
 	WORD var = MAKEWORD(2, 2);
 	WSADATA dat;
 	WSAStartup(var, &dat);
+#endif // _WIN32
 	//1、创建套接字
 	SOCKET _socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	//2、绑定端口
 	sockaddr_in _addr = {};
+	
+#ifdef _WIN32
 	_addr.sin_addr.S_un.S_addr = INADDR_ANY;
+#else
+	_addr.sin_addr.s_addr = INADDR_ANY;
+#endif // _WIN32
 	_addr.sin_family = AF_INET;
 	_addr.sin_port = htons(4567);
 	if (SOCKET_ERROR == bind(_socket, (sockaddr*)&_addr, sizeof(_addr))) {
@@ -156,16 +175,20 @@ int main() {
 		FD_SET(_socket, &fdRead);
 		FD_SET(_socket, &fdWrite);
 		FD_SET(_socket, &fdExp);
-
+		//最大描述符
+		SOCKET maxSock = _socket;
 		//现在有空闲的客户端到达，全部加入fdRead
 		for (int n = (int)g_clients.size() - 1; n >= 0; n--) {
 			FD_SET(g_clients[n], &fdRead);
+			if (maxSock < g_clients[n]) {
+				maxSock = g_clients[n];
+			}
 		}
 		/*
 		nfds —— 文件描述符加1， 在Windows中这个参数可以写0
 		*/
 		timeval t = { 0, 0 };
-		int ret = select(_socket + 1, &fdRead, &fdWrite, &fdExp, &t);
+		int ret = select(maxSock + 1, &fdRead, &fdWrite, &fdExp, &t);
 		if (ret < 0) {
 			cout << "select任务结束。\n";
 			break;
@@ -179,9 +202,13 @@ int main() {
 			int caddrlen = sizeof(sockaddr_in);
 
 			SOCKET _csocket = INVALID_SOCKET;//客户端套接字
-			_csocket = accept(_socket, (sockaddr*)&_caddr, &caddrlen);
+
+			_csocket = accept(_socket, (sockaddr*)&_caddr, (socklen_t *) & caddrlen);
+
+
+			
 			if (INVALID_SOCKET == _csocket) {
-				printf("错误，接受客户端连接失败...\n");
+				printf("错误，接受客户端连接失败...\n"); 
 			}
 			else {
 				for (int n = (int)g_clients.size() - 1; n >= 0; n--) {//和已和服务端连接的客户都说一声，新人来了
@@ -192,19 +219,27 @@ int main() {
 				printf("新客户端加入： IP = %s \n", inet_ntoa(_caddr.sin_addr));
 			}
 		}
-		for (int n = 0; n < (int)fdRead.fd_count; n++) {
-			if (-1 == processor(fdRead.fd_array[n])) {//结束后把改句柄从集合中删除
-				auto iter = find(g_clients.begin(), g_clients.end(), fdRead.fd_array[n]);
-				if (iter != g_clients.end())	g_clients.erase(iter);
+
+		for (int n = (int)g_clients.size() - 1; n >= 0; n--) {
+			if (FD_ISSET(g_clients[n], &fdRead)) {
+				if (-1 == processor(g_clients[n])) {//结束后把改句柄从集合中删除
+					auto iter = g_clients.begin();
+					if (iter != g_clients.end())	g_clients.erase(iter);
+				}
 			}
 		}
 		
 		/*cout << "服务端做事........\n";*/
 	}
 
-	//关闭服务端
+#ifdef _WIN32
+	//4、关闭客户端
 	closesocket(_socket);
 	WSACleanup();
+	printf("客服端关闭... \n");
+#else
+	close(_socket);
+#endif // _WIN32
 	getchar();
 	return 0;
 }

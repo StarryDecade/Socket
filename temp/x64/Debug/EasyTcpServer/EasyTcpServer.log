@@ -1,12 +1,11 @@
 ﻿  server.cpp
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(92,10): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(92,10): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(92,10): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(92,10): message : 请考虑在格式字符串中使用“%I64d”
 C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(103,10): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
 C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(103,10): message : 请考虑在格式字符串中使用“%lld”
 C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(103,10): message : 请考虑在格式字符串中使用“%Id”
 C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(103,10): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(168,28): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(117): warning C4715: “processor”: 不是所有的控件路径都返回值
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(114,10): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(114,10): message : 请考虑在格式字符串中使用“%lld”
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(114,10): message : 请考虑在格式字符串中使用“%Id”
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(114,10): message : 请考虑在格式字符串中使用“%I64d”
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpServer\server.cpp(191,28): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据
   EasyTcpServer.vcxproj -> C:\Four years of university experience\c++\Socket网络通信基础\bin\x64\Debug\EasyTcpServer.exe
