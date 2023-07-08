@@ -111,7 +111,7 @@ int processor(SOCKET _cSock) {
 	{
 		recv(_cSock, szRecv + sizeof(DataHeader), header->dataLength - sizeof(DataHeader), 0);
 		Logout* logout = (Logout*)szRecv;
-		printf("收到客户端<Socket=%d>请求：CMD_LOGOUT,数据长度：%d,userName=%s \n", _cSock, logout->dataLength, logout->userName);
+		printf("收到客户端<Socket=%d>请求：CMD_LOGOUT,数据长度：%d,userName=%s \n", (int)_cSock, logout->dataLength, logout->userName);
 		//忽略判断用户密码是否正确的过程
 		LogoutResult ret;
 		send(_cSock, (char*)&ret, sizeof(ret), 0);
