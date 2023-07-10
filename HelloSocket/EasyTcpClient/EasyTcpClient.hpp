@@ -1,7 +1,8 @@
-#ifndef _EasyTcpClient_hpp_
-#define _EasyTcpClient_hpp_
-#define _CRT_SECURE_NO_WARNINGS
+#ifndef _EasyTcpClient_hpp
+#define _EasyTcpClient_hpp
+
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include<windows.h>
@@ -10,241 +11,167 @@
 #else
 #include<unistd.h> //uni std
 #include<arpa/inet.h>
-#include<string.h>
 
 #define SOCKET int
 #define INVALID_SOCKET  (SOCKET)(~0)
 #define SOCKET_ERROR            (-1)
 #endif
-#include<iostream>
-using namespace std;
+
 #include "MessageHeader.hpp"
+#include <string>
+#include <string.h>//内存拷贝memcpy的头文件
 
-class EasyTcpClient
-{
-	SOCKET _sock;
+class EasyTcpClient {
+private:
+	SOCKET _socket;
 public:
-	EasyTcpClient()
-	{
-		_sock = INVALID_SOCKET;
-	}
+#ifndef RECV_BUFF_SIZE
+#define RECV_BUFF_SIZE 102400
+#endif 
+	char _szMsgBuf[RECV_BUFF_SIZE * 10] = {};//第二缓冲区 消息缓冲区
+	int _lastPos = 0;//消息缓冲区的数据尾部位置
+	char _szRecv[RECV_BUFF_SIZE] = {};
+	EasyTcpClient();//构造函数——初始化 
+	virtual ~EasyTcpClient() {};//系够函数——回收资源
+	void InitSocket();//初始化_socket
+	int Connect(const char* ip, unsigned short port);//连接服务端
+	void Close();//关闭客户端
+	int SendData(DataHeader* header);//发送数据
+	int RecvData();//接收数据	
+	bool IsRun();//判断select是否正在运行
+	int OnRun();//用select接受网络消息
+	virtual void OnNetMsg(DataHeader* header);
+};
 
-	virtual ~EasyTcpClient()
-	{
+inline EasyTcpClient::EasyTcpClient() {
+	_socket = INVALID_SOCKET;
+}
+inline void EasyTcpClient::InitSocket() {
+#ifdef _WIN32
+	//启动Windows socket 2.x环境
+	WORD ver = MAKEWORD(2, 2);
+	WSADATA dat;
+	WSAStartup(ver, &dat);
+#endif 
+	if (_socket != INVALID_SOCKET) {
+		cout << "旧链接socket(" << _socket << ")关闭...." << endl;
 		Close();
 	}
-	//初始化socket
-	void InitSocket()
-	{
+	_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (_socket == INVALID_SOCKET)	cout << "socket 创建失败" << endl;
+	else 	cout << "socket 创建成功:" << _socket << endl;
+}
+
+inline void EasyTcpClient::Close() {
+	if (_socket == INVALID_SOCKET) {
 #ifdef _WIN32
-		//启动Windows socket 2.x环境
-		WORD ver = MAKEWORD(2, 2);
-		WSADATA dat;
-		WSAStartup(ver, &dat);
-#endif
-		if (INVALID_SOCKET != _sock)
-		{
-			printf("<socket=%d>关闭旧连接...\n", _sock);
+		closesocket(_socket);
+		//清除Windows socket环境
+		WSACleanup();
+#else
+		close(_socket);//通过句柄（文件描述符）关闭socket
+#endif 
+		_socket = INVALID_SOCKET;//句柄（文件描述符）——赋为-1
+	}
+}
+
+inline int EasyTcpClient::Connect(const char* ip, unsigned short port) {
+	if (_socket == INVALID_SOCKET)	InitSocket();
+
+	sockaddr_in _sin = {};
+	_sin.sin_family = AF_INET;
+	_sin.sin_port = htons(port);
+#ifdef  _WIN32
+	_sin.sin_addr.S_un.S_addr = inet_addr(ip);
+#else
+	_sin.sin_addr.s_addr = inet_addr(ip);
+#endif 
+	int ret = SOCKET_ERROR;
+	ret = connect(_socket, (const sockaddr*)&_sin, sizeof(sockaddr_in));
+	if (ret == SOCKET_ERROR)	cout << _socket << "连接服务端失败..." << endl;
+	else cout << _socket << "创建成功" << endl;
+	return ret;
+}
+
+inline bool EasyTcpClient::IsRun() {
+	return _socket == INVALID_SOCKET;
+}
+
+inline int EasyTcpClient::OnRun() {
+	if (IsRun()) {
+		fd_set fdRead;
+		FD_ZERO(&fdRead);
+		FD_SET(_socket, &fdRead);
+		timeval t = { 0, 0 };
+		int ret = select(_socket + 1, &fdRead, 0, 0, &t);
+		if (ret < 0) {
+			cout << _socket << "select 处理网络消息任务结束" << endl;
 			Close();
+			return 0;
 		}
-		_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (INVALID_SOCKET == _sock)
-		{
-			printf("错误，建立Socket失败...\n");
-		}
-		else {
-			printf("建立Socket=<%d>成功...\n", _sock);
-		}
-	}
-
-	//连接服务器
-	int Connect(const char* ip, unsigned short port)
-	{
-		if (INVALID_SOCKET == _sock)
-		{
-			InitSocket();
-		}
-		// 2 连接服务器 connect
-		sockaddr_in _sin = {};
-		_sin.sin_family = AF_INET;
-		_sin.sin_port = htons(port);
-#ifdef _WIN32
-		_sin.sin_addr.S_un.S_addr = inet_addr(ip);
-#else
-		_sin.sin_addr.s_addr = inet_addr(ip);
-#endif
-		printf("<socket=%d>正在连接服务器<%s:%d>...\n", _sock, ip, port);
-		int ret = connect(_sock, (sockaddr*)&_sin, sizeof(sockaddr_in));
-		if (SOCKET_ERROR == ret)
-		{
-			printf("<socket=%d>错误，连接服务器<%s:%d>失败...\n", _sock, ip, port);
-		}
-		else {
-			printf("<socket=%d>连接服务器<%s:%d>成功...\n", _sock, ip, port);
-		}
-		return ret;
-	}
-
-	//关闭套节字closesocket
-	void Close()
-	{
-		if (_sock != INVALID_SOCKET)
-		{
-#ifdef _WIN32
-			closesocket(_sock);
-			//清除Windows socket环境
-			WSACleanup();
-#else
-			close(_sock);
-#endif
-			_sock = INVALID_SOCKET;
-		}
-	}
-
-	//处理网络消息
-	int _nCount = 0;
-	bool OnRun()
-	{
-		if (isRun())
-		{
-			fd_set fdReads;
-			FD_ZERO(&fdReads);
-			FD_SET(_sock, &fdReads);
-			timeval t = { 0,0 };
-			int ret = select(_sock + 1, &fdReads, 0, 0, &t);
-			//printf("select ret=%d count=%d\n", ret, _nCount++);
-			if (ret < 0)
-			{
-				printf("<socket=%d>select任务结束1\n", _sock);
+		if (FD_ISSET(_socket, &fdRead)) {
+			FD_CLR(_socket, &fdRead);
+			if (RecvData()) {
+				cout << _socket << "select 执行接受数据任务结束" << endl;
 				Close();
-				return false;
-			}
-			if (FD_ISSET(_sock, &fdReads))
-			{
-				FD_CLR(_sock, &fdReads);
-
-				if (-1 == RecvData(_sock))
-				{
-					printf("<socket=%d>select任务结束2\n", _sock);
-					Close();
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	//是否工作中
-	bool isRun()
-	{
-		return _sock != INVALID_SOCKET;
-	}
-	//缓冲区最小单元大小
-#ifndef RECV_BUFF_SZIE
-#define RECV_BUFF_SZIE 102400
-#endif // !RECV_BUFF_SZIE
-	//第二缓冲区 消息缓冲区
-	char _szMsgBuf[RECV_BUFF_SZIE * 10] = {};
-	//消息缓冲区的数据尾部位置
-	int _lastPos = 0;
-	//接收缓冲区
-	char _szRecv[RECV_BUFF_SZIE] = {};
-
-	//接收数据 处理粘包 拆分包
-	int RecvData(SOCKET cSock)
-	{
-		// 5 接收数据
-		int nLen = (int)recv(cSock, _szRecv, RECV_BUFF_SZIE, 0);
-		//printf("nLen=%d\n", nLen);
-		if (nLen <= 0)
-		{
-			printf("<socket=%d>与服务器断开连接，任务结束。\n", cSock);
-			return -1;
-		}
-		//将收取到的数据拷贝到消息缓冲区
-		memcpy(_szMsgBuf + _lastPos, _szRecv, nLen);
-		//消息缓冲区的数据尾部位置后移
-		_lastPos += nLen;
-		//判断消息缓冲区的数据长度大于消息头DataHeader长度
-		while (_lastPos >= sizeof(DataHeader))
-		{
-			//这时就可以知道当前消息的长度
-			DataHeader* header = (DataHeader*)_szMsgBuf;
-			//判断消息缓冲区的数据长度大于消息长度
-			if (_lastPos >= header->dataLength)
-			{
-				//消息缓冲区剩余未处理数据的长度
-				int nSize = _lastPos - header->dataLength;
-				//处理网络消息
-				OnNetMsg(header);
-				//将消息缓冲区剩余未处理数据前移
-				memcpy(_szMsgBuf, _szMsgBuf + header->dataLength, nSize);
-				//消息缓冲区的数据尾部位置前移
-				_lastPos = nSize;
-			}
-			else {
-				//消息缓冲区剩余数据不够一条完整消息
-				break;
+				return 1;
 			}
 		}
 		return 0;
 	}
-
-	//响应网络消息
-	virtual void OnNetMsg(DataHeader* header)
-	{
-		switch (header->cmd)
-		{
-		case CMD_LOGIN_RESULT:
-		{
-
-			LoginResult* login = (LoginResult*)header;
-			//printf("<socket=%d>收到服务端消息：CMD_LOGIN_RESULT,数据长度：%d\n", _sock, login->dataLength);
-		}
-		break;
-		case CMD_LOGOUT_RESULT:
-		{
-			LogoutResult* logout = (LogoutResult*)header;
-			//printf("<socket=%d>收到服务端消息：CMD_LOGOUT_RESULT,数据长度：%d\n", _sock, logout->dataLength);
-		}
-		break;
-		case CMD_NEW_USER_JOIN:
-		{
-			NewUserJoin* userJoin = (NewUserJoin*)header;
-			//printf("<socket=%d>收到服务端消息：CMD_NEW_USER_JOIN,数据长度：%d\n", _sock, userJoin->dataLength);
-		}
-		break;
-		case CMD_ERROR:
-		{
-			printf("<socket=%d>收到服务端消息：CMD_ERROR,数据长度：%d\n", _sock, header->dataLength);
-		}
-		break;
-		default:
-		{
-			printf("<socket=%d>收到未定义消息,数据长度：%d\n", _sock, header->dataLength);
-		}
-		}
+	return 0;
+}
+inline int EasyTcpClient::SendData(DataHeader* header) {
+	if (IsRun() && header) {
+		return send(_socket, (const char*)header, header->dataLength, 0);
 	}
+	return INVALID_SOCKET;
+}
 
-	//发送数据
-	int SendData(DataHeader* header)
-	{
-		if (isRun() && header)
-		{
-			return send(_sock, (const char*)header, header->dataLength, 0);
-		}
-		return SOCKET_ERROR;
+inline int EasyTcpClient::RecvData() {
+	int nlen = (int)recv(_socket, _szRecv, RECV_BUFF_SIZE, 0);
+	if (nlen <= 0) {
+		cout << _socket << "与服务器断开连接" << endl;
+		return -1;
 	}
-private:
+	memcpy(_szMsgBuf + _lastPos, _szRecv, nlen);
+	_lastPos += nlen;
+	while (_lastPos > sizeof(DataHeader)) {
+		DataHeader* header = (DataHeader*)_szMsgBuf;
+		if (_lastPos >= header->dataLength) {
+			int nsize = _lastPos - header->dataLength;
 
-};
-
-#endif
-
-/*
-严重性	代码	说明	项目	文件	行	禁止显示状态
- define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings	EasyTcpClient	C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp	71
-
-
-*/
+			memcpy(_szMsgBuf, _szMsgBuf + header->dataLength, nsize);
+			_lastPos = nsize;
+		}
+		else break;
+	}
+	return 0;
+}
+inline void EasyTcpClient::OnNetMsg(DataHeader* header) {
+	switch (header->cmd) {
+	case CMD_LOGIN_RESULT: {
+		Login* login = (Login*)header;
+		cout << login->userNamer << "登录成功！" << endl;
+		break;
+	}
+	case CMD_LOGOUT_RESULT: {
+		Logout* logout = (Logout*)header;
+		cout << logout->userNamer << "退出成功！" << endl;
+		break;
+	}
+	case CMD_NEW_USER_JOIN: {
+		NewUserJoin* newuserjoin = (NewUserJoin*)header;
+		cout << newuserjoin->sock << "新用户加入成功";
+		break;
+	}
+	case CMD_ERROR: {
+		cout << "接收错误" << endl;
+		break;
+	}
+	default: {
+		cout << "收到未定义消息" << endl;
+	}
+	}
+}
+#endif 

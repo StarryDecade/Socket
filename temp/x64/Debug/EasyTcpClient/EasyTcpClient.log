@@ -1,43 +1,4 @@
 ﻿  client.cpp
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(47,11): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(47,11): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(47,11): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(47,11): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(56,11): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(56,11): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(56,11): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(56,11): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(76,10): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(76,10): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(76,10): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(76,10): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(80,11): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(80,11): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(80,11): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(80,11): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(83,11): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(83,11): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(83,11): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(83,11): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(114,27): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(118,12): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(118,12): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(118,12): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(118,12): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(128,13): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(128,13): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(128,13): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(128,13): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(162,11): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(162,11): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(162,11): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(162,11): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(220,11): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(220,11): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(220,11): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(220,11): message : 请考虑在格式字符串中使用“%I64d”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(225,11): warning C4477: “printf”: 格式字符串“%d”需要类型“int”的参数，但可变参数 1 拥有了类型“SOCKET”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(225,11): message : 请考虑在格式字符串中使用“%lld”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(225,11): message : 请考虑在格式字符串中使用“%Id”
-C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(225,11): message : 请考虑在格式字符串中使用“%I64d”
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(106,28): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据
+C:\Four years of university experience\c++\Socket网络通信基础\HelloSocket\EasyTcpClient\EasyTcpClient.hpp(128,9): warning C4309: “return”: 截断常量值
   EasyTcpClient.vcxproj -> C:\Four years of university experience\c++\Socket网络通信基础\bin\x64\Debug\EasyTcpClient.exe
